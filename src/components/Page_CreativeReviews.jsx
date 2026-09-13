@@ -10,7 +10,6 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
 const Page_CreativeReviews = (props) => {
-    const nodeData = props.nodeData;
 
     useEffect(() => {
         document.body.classList.add('creative-reviews');
@@ -28,7 +27,7 @@ const Page_CreativeReviews = (props) => {
 
             for (let i=0;i<document.getElementsByClassName('figure').length;i++){
                 let d = 0.05*(i%2);
-                gsap.from(".box-"+i, {  
+                gsap.from(".box-"+i, {
                     scrollTrigger: {
                         trigger: ".box-"+i
                     },
@@ -51,12 +50,12 @@ const Page_CreativeReviews = (props) => {
     {
       ${__GraphQL_Queries.queries.creativeReviews}
     }`;
-    
+
     const { data, loading, error } = useQuery(GET_CONTENT_CREATIVE_REVIEWS);
 
     if (loading) { logginF('loading From Page_CreativeReviews'); return }
     if (error) { logginF('error From Page_CreativeReviews'); return }
-    if (!data) { logginF('error From Page_CreativeReviews'); return }
+    if (!data?.creativeReviews) { logginF('error From Page_CreativeReviews'); return }
 
     const nodeMoreData = data.creativeReviews;
 
@@ -64,19 +63,19 @@ const Page_CreativeReviews = (props) => {
     const parsedDocument = parser.parseFromString(nodeMoreData.content, "text/html");
     const content_text = parsedDocument.getElementsByTagName("p");
     // console.log(content_text.length);
-    let childPages = nodeMoreData.children.edges;
+    let childPages = (nodeMoreData.children?.edges || []).filter(edge => edge?.node?.uri);
 
 //     const childPagesresult = Object.keys(childPages).map((key) => [key, childPages[key]]);
 //  console.log(childPagesresult);
     let ncount = -1;
     let childPageArray = [];
     childPages.forEach((element, ind) => {
-        if (ind%2 == 0) ncount++;  
+        if (ind%2 === 0) ncount++;
         if (!childPageArray[ncount]) childPageArray[ncount] = [];
         childPageArray[ncount].push(element.node);
     });
 
- console.log(childPageArray);
+
 
     return(
         <div ref={refBox} >
@@ -103,20 +102,20 @@ const Page_CreativeReviews = (props) => {
                                     <figure className={"box-" + index*2 +" figure mb-5"}>
                                         <Link to={childPage[0].uri}>
                                             <div className="figure-img-wrap">
-                                                <img src={childPage[0].featuredImage.node.sourceUrl?childPage[0].featuredImage.node.sourceUrl:creativeReviewsFeaturedImage} className="figure-img img-fluid" alt="..." />
+                                                <img src={childPage[0].featuredImage?.node?.sourceUrl?childPage[0].featuredImage?.node?.sourceUrl:creativeReviewsFeaturedImage} className="figure-img img-fluid" alt="..." />
                                             </div>
                                             <figcaption className="figure-caption text-center mt-2 fw-bold p-0">{childPage[0].title}</figcaption>
                                         </Link>
                                     </figure>
                                 </div>
-                                { 
+                                {
                                     childPage[1]
                                     ?
                                         <div className="col-md-6" >
                                             <figure className={"box-" + (index*2+1) +" figure mb-5"}>
                                                 <Link to={childPage[1].uri}>
                                                     <div className="figure-img-wrap">
-                                                        <img src={childPage[1].featuredImage.node.sourceUrl} className="figure-img img-fluid" alt="..." />
+                                                        <img src={childPage[1].featuredImage?.node?.sourceUrl || creativeReviewsFeaturedImage} className="figure-img img-fluid" alt="..." />
                                                     </div>
                                                 </Link>
                                                 <figcaption className="figure-caption text-center mt-2 fw-bold p-0">{childPage[1].title}</figcaption>

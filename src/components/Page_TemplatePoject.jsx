@@ -15,7 +15,7 @@ const Page_TemplatePoject = (props) => {
 
     useLayoutEffect(() => {
         document.getElementById('footer').classList.remove('hidden');
-        return () => { 
+        return () => {
             document.getElementById('footer').classList.add('hidden');
         }
     });
@@ -49,19 +49,19 @@ const Page_TemplatePoject = (props) => {
 
     if (loading) { logginF('loading From Page_TemplateProject'); return }
     if (error) { logginF('error From Page_TemplateProject'); return }
-    if (!data) { logginF('error From Page_TemplateProject'); return }
+    if (!data?.page) { logginF('error From Page_TemplateProject'); return }
 
     const nodeMoreData = data.page;
 
-    return(  
+    return(
         <>
             <Helmet>
-                <title>{nodeMoreData.projectsExtras.project} | VALUECOM</title>
+                <title>{nodeMoreData.projectsExtras?.project} | FORM & FIELD</title>
             </Helmet>
             <section className="mb-5 ">
                 <div className="container-fluid px-0">
                     <div className="project-featured-image">
-                        <img src={nodeMoreData.projectsExtras.heroImage.sourceUrl} alt="" width="2560" height="993"  />
+                        <img src={nodeMoreData.projectsExtras?.heroImage?.sourceUrl} alt="" width="2560" height="993"  />
                     </div>
                 </div>
             </section>
@@ -70,23 +70,23 @@ const Page_TemplatePoject = (props) => {
                     <div className="project-texts">
                         <div className="row">
                             <div className="col-md-6">
-                                <div className="project-description mb-5" dangerouslySetInnerHTML={{__html:nodeMoreData.projectsExtras.mainText}} ></div>
+                                <div className="project-description mb-5" dangerouslySetInnerHTML={{__html:nodeMoreData.projectsExtras?.mainText}} ></div>
                             </div>
                             <div className="col-sm-6">
                                 <div className="project-titles">
                                     <div className="project-client">
                                         <h6><strong>Client</strong></h6>
-                                        <span>{nodeMoreData.projectsExtras.client}</span>
+                                        <span>{nodeMoreData.projectsExtras?.client}</span>
                                     </div>
                                     <hr style={{ width: '60%' }} />
                                     <div className="project-project">
                                         <h6><strong>Project</strong></h6>
-                                        <span>{nodeMoreData.projectsExtras.project}</span>
+                                        <span>{nodeMoreData.projectsExtras?.project}</span>
                                     </div>
                                     <hr style={{ width: '60%' }} />
                                     <div className="project-our-services">
                                         <h6><strong>Our services</strong></h6>
-                                        <span>{nodeMoreData.projectsExtras.ourServices}</span>
+                                        <span>{nodeMoreData.projectsExtras?.ourServices}</span>
                                     </div>
                                 </div>
                             </div>

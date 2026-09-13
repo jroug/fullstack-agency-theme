@@ -442,3 +442,94 @@ input[type=text],input[type=email], select, textarea {
             }
 
         }
+
+/* Keep mixed portrait/landscape content aligned in the existing editorial grid. */
+.home .box .figure {
+    display: block;
+}
+.home .box .figure-img-wrap {
+    height: clamp(220px, 31.58vw, 420px);
+}
+.home .box .figure .figure-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Project and review cards also receive mixed-aspect CMS/demo artwork. */
+.we-deliver .figure-img-wrap,
+.creative-reviews .figure-img-wrap {
+    aspect-ratio: 640 / 420;
+}
+.we-deliver .figure-img-wrap img,
+.creative-reviews .figure-img-wrap img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Soften selected people photos in demo mode; text and controls remain sharp. */
+.demo-mode img[src*="we-dream"],
+.demo-mode img[src*="We-are-trusted_Art"] {
+    filter: blur(2.5px);
+}
+.demo-mode .carousel-item > img[src*="We-are-trusted_Art"] {
+    transform: scale(1.015);
+}
+
+@media (max-width: 767px) {
+    .home .box .figure-img-wrap {
+        height: 360px;
+    }
+}
+
+
+/* Shared image frames retain their proportions at every breakpoint. */
+.simple-page-featured-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1296 / 384;
+    object-fit: cover;
+}
+.the-team-cards .card .card-img-top {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 413 / 275;
+    object-fit: cover;
+}
+.logos-gallery .w-trusted {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 212 / 141;
+    object-fit: contain;
+}
+.logo-wrap > a > img {
+    display: block;
+    width: 204px;
+    max-width: 100%;
+    height: auto;
+}
+.project-featured-image {
+    overflow: hidden;
+}
+.project-content img {
+    height: auto;
+}
+.project-content .image-frame-cover img {
+    height: 100%;
+}
+.demo-mode .project-content > .row > .col-md-6 > img {
+    display: block;
+    aspect-ratio: 640 / 420;
+    object-fit: cover;
+}
+.we-deliver .figure,
+.creative-reviews .figure {
+    display: block;
+}

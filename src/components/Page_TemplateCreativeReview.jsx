@@ -7,7 +7,7 @@ import { useQuery, gql } from "@apollo/client";
 const Page_TemplateCreativeReview = (props) => {
     const nodeData = props.nodeData;
 
-    
+
     useEffect(() => {
         document.body.classList.add('creative-review');
         return () => {
@@ -17,7 +17,7 @@ const Page_TemplateCreativeReview = (props) => {
 
     useLayoutEffect(() => {
         document.getElementById('footer').classList.remove('hidden');
-        return () => { 
+        return () => {
             document.getElementById('footer').classList.add('hidden');
         }
     });
@@ -38,17 +38,17 @@ const Page_TemplateCreativeReview = (props) => {
 
     if (loading) { logginF('loading From Page_CreativeReviews'); return }
     if (error) { logginF('error From Page_CreativeReviews'); return }
-    if (!data) { logginF('error From Page_CreativeReviews'); return }
+    if (!data?.page) { logginF('error From Page_CreativeReviews'); return }
 
     const nodeMoreData = data.page;
 
     // console.log(nodeMoreData);
 
-    return ( 
+    return (
         <>
-            <iframe className="iframe-creative-review" src={nodeMoreData.creativeReviewTemplateExtras.frameUrl} height={nodeMoreData.creativeReviewTemplateExtras.frameHeight} ></iframe>
+            <iframe title={nodeMoreData.title || "Creative review"} className="iframe-creative-review" src={nodeMoreData.creativeReviewTemplateExtras?.frameUrl} height={nodeMoreData.creativeReviewTemplateExtras?.frameHeight} ></iframe>
         </>
      );
 }
- 
+
 export default Page_TemplateCreativeReview;

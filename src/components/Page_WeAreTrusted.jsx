@@ -1,9 +1,9 @@
 
-import React, { useEffect, useLayoutEffect } from "react"; 
-import { useQuery, gql } from "@apollo/client"; 
-import Widget_SimpleTitle from "./Widget_SimpleTitle";
-import Widget_SimpleHeroImage from "./Widget_SimpleHeroImage";
-import Widget_SimpleContent from "./Widget_SimpleContent";
+import React, { useEffect, useLayoutEffect } from "react";
+import { useQuery, gql } from "@apollo/client";
+import WidgetSimpleTitle from "./Widget_SimpleTitle";
+import WidgetSimpleHeroImage from "./Widget_SimpleHeroImage";
+import WidgetSimpleContent from "./Widget_SimpleContent";
 import { logginF } from './__Utils';
 import __GraphQL_Queries from "./__GraphQL_Queries";
 import { Helmet } from "react-helmet-async";
@@ -17,10 +17,10 @@ const Page_WeAreTrusted = (props) => {
           document.body.classList.remove('we-are-trusted');
         }
     }, [])
-    
+
     useLayoutEffect(() => {
         document.getElementById('footer').classList.remove('hidden');
-        return () => { 
+        return () => {
             document.getElementById('footer').classList.add('hidden');
         }
     });
@@ -34,8 +34,8 @@ const Page_WeAreTrusted = (props) => {
 
     if (loading) { logginF('loading From Page_WeAreTrusted'); return }
     if (error) { logginF('error From Page_WeAreTrusted'); return }
-    if (!data) { logginF('error From Page_WeAreTrusted'); return }
-  
+    if (!data?.weAreTrusted) { logginF('error From Page_WeAreTrusted'); return }
+
     const nodeMoreData = data.weAreTrusted;
     // const content = parse(nodeMoreData.content);
     // console.log(content);
@@ -43,7 +43,7 @@ const Page_WeAreTrusted = (props) => {
     // strip tags from html in text
     // const text = nodeMoreData.content.replace(/<\/?[^>]+(>|$)/g, '');
 
-    const wysiwyg_html = nodeMoreData.weAreTrustedExtras.images;
+    const wysiwyg_html = nodeMoreData.weAreTrustedExtras?.images || "";
 
     const parser = new DOMParser();
     const parsedDocument = parser.parseFromString(wysiwyg_html, "text/html");
@@ -56,11 +56,11 @@ const Page_WeAreTrusted = (props) => {
     return (
         <>
             <Helmet>
-                <title>We are trusted | VALUECOM</title>
+                <title>We are trusted | FORM & FIELD</title>
             </Helmet>
-            <Widget_SimpleTitle widgetTitle={nodeData.title} />
-            <Widget_SimpleHeroImage imgObj={nodeMoreData.featuredImage.node} />
-            <Widget_SimpleContent contentHTML={nodeMoreData.content} />
+            <WidgetSimpleTitle widgetTitle={nodeData.title} />
+            <WidgetSimpleHeroImage imgObj={nodeMoreData.featuredImage?.node} />
+            <WidgetSimpleContent contentHTML={nodeMoreData.content} />
             <section>
                 <div className="container-xxl">
                     <div className="row">
@@ -77,5 +77,5 @@ const Page_WeAreTrusted = (props) => {
         </>
     )
 }
- 
+
 export default Page_WeAreTrusted;

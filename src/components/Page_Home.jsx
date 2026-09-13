@@ -5,14 +5,14 @@ import { preloadImage, logginF } from './__Utils';
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 // import {
-//     Widget_HomeSliderBootstrap
+//     WidgetHomeSliderBootstrap
 // } from "./";
 import { useQuery, gql } from "@apollo/client";
 
-const Widget_HomeSliderBootstrap = lazy( () => import("./Widget_HomeSliderBootstrap") );
+const WidgetHomeSliderBootstrap = lazy( () => import("./Widget_HomeSliderBootstrap") );
 
 const Page_Home = (props) => {
-    // animation 
+    // animation
     const refBox = useRef();
 
     useLayoutEffect(() => {
@@ -22,7 +22,7 @@ const Page_Home = (props) => {
 
             for (let i=0;i<9;i++){
                 let d = 0.05*(i%3);
-                gsap.from(".box-"+i, {  
+                gsap.from(".box-"+i, {
                     scrollTrigger: {
                         trigger: ".box-"+i
                     },
@@ -61,7 +61,7 @@ const Page_Home = (props) => {
 
     if (loading) { logginF('loading From Page_Home'); return }
     if (error) { logginF('error From Page_Home'); return }
-    if (!data) { logginF('error From Page_Home'); return }
+    if (!data?.homePage) { logginF('error From Page_Home'); return }
 
     const nodeMoreData = data.homePage;
     const home_gallery_html = nodeMoreData.content;
@@ -77,23 +77,23 @@ const Page_Home = (props) => {
     //     // src_set[key].srcset = value.srcset;
     // }
 
-    const homepageExtrasArray = nodeMoreData.homepageExtras;
+    const homepageExtrasArray = nodeMoreData.homepageExtras || {};
     // console.log("homepageExtrasArray", homepageExtrasArray);
 
 
     const img_arr_inner = [];
     var n = 0;
     for (const [key, value] of Object.entries(homepageExtrasArray)) {
-        if (key!='__typename'){
+        if (key !== '__typename' && value?.sourceUrl){
             var _targetUrl = value.targetUrl==null?'':value.targetUrl.replace(/<\/?[^>]+(>|$)/g, '').replace("\n","");
-            img_arr_inner[n++] = { img_src: value.sourceUrl, title: value.title, _targetUrl: _targetUrl, altText: value.altText, width: value.mediaDetails.width, height: value.mediaDetails.height };
+            img_arr_inner[n++] = { img_src: value.sourceUrl, title: value.title, _targetUrl: _targetUrl, altText: value.altText, width: value.mediaDetails?.width, height: value.mediaDetails?.height };
         }
     }
     //  console.log(img_arr_inner);
     return (
         <div ref={refBox} >
             <Suspense fallback={<span style={{fontSize:'12px'}}>Loading...</span>} >
-                <Widget_HomeSliderBootstrap figures = {figures} />
+                <WidgetHomeSliderBootstrap figures = {figures} />
             </Suspense>
             <section className="py-3">
                 <div className="container-xxl">
@@ -101,6 +101,7 @@ const Page_Home = (props) => {
                         {[6,3,3].map( (value, index) => {
                             // console.log('tolis')
                             // console.log(img_arr_inner[index]._targetUrl)
+                            if (!img_arr_inner[index]) return null;
                             return (
                                 <div key={"img__"+index} className={"box box-" + index + " col-md-" + value} >
                                     <figure className="figure mx-sm-5 px-sm-5 mx-md-0 px-md-0">
@@ -123,6 +124,7 @@ const Page_Home = (props) => {
                         {[3,3,6].map( (value, index) => {
                             // console.log('tolis')
                             index = index+3;
+                            if (!img_arr_inner[index]) return null;
                             return (
                                 <div key={"img__"+index} className={"box box-" + index + " col-md-" + value } >
                                     <figure className="figure mx-sm-5 px-sm-5 mx-md-0 px-md-0">
@@ -145,12 +147,13 @@ const Page_Home = (props) => {
                         {[6,3,3].map( (value, index) => {
                             // console.log('tolis')
                             index = index + 6;
+                            if (!img_arr_inner[index]) return null;
                             return (
                                 <div key={"img__"+index} className={"box box-" + index + " col-md-" + value }>
                                     <figure className="figure mx-sm-5 px-sm-5 mx-md-0 px-md-0">
                                         <Link to={img_arr_inner[index]._targetUrl} >
                                             <div className="figure-img-wrap">
-                                                <img src={img_arr_inner[index].img_src}  width={img_arr_inner[index].width} height={img_arr_inner[index].height}  className="figure-img img-fluid" loading="lazy" alt="..." />
+                                                <img src={img_arr_inner[index].img_src}  width={img_arr_inner[index].width} height={img_arr_inner[index].height}  className="figure-img img-fluid" loading="lazy" alt={img_arr_inner[index].altText} />
                                             </div>
                                             <figcaption className="figure-caption fw-medium fs-5">{img_arr_inner[index].title}</figcaption>
                                         </Link>

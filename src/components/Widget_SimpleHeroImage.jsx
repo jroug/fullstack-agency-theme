@@ -5,19 +5,22 @@ const Widget_SimpleHeroImage = (props) => {
 
     const imgObj = props.imgObj;
 
-    // animation 
+    // animation
     const refBox = useRef();
 
     useLayoutEffect(() => {
+        if (!refBox.current) return;
         const ctx = gsap.context(() => {
             gsap.from(refBox.current, {  transform: "translateY(50px)"  });
             gsap.to(refBox.current, {  transform: "translateY(0)"  });
-    
+
             // gsap.to(".box-4", {  scale:3 });
         }, refBox);
         return () => ctx.revert();
     });
 
+
+    if (!imgObj?.sourceUrl) return null;
 
     return (
         <section>

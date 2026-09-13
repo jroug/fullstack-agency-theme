@@ -1,11 +1,11 @@
 import React, { useEffect, useLayoutEffect }  from "react";
-import Widget_SimpleTitle  from "./Widget_SimpleTitle";
-import Widget_SimpleHeroImage  from "./Widget_SimpleHeroImage";
-import Widget_SimpleContent  from "./Widget_SimpleContent";
+import WidgetSimpleTitle  from "./Widget_SimpleTitle";
+import WidgetSimpleHeroImage  from "./Widget_SimpleHeroImage";
+import WidgetSimpleContent  from "./Widget_SimpleContent";
 
 const Page_WeBelieve = (props) => {
     const nodeData = props.nodeData;
- 
+
 
     useEffect(() => {
         document.body.classList.add('simple');
@@ -16,32 +16,32 @@ const Page_WeBelieve = (props) => {
 
     useLayoutEffect(() => {
         document.getElementById('footer').classList.remove('hidden');
-        return () => { 
+        return () => {
             document.getElementById('footer').classList.add('hidden');
         }
     });
-    
+
     return (
         <>
             {
-                nodeData.title!==null ? 
-                <Widget_SimpleTitle widgetTitle={nodeData.title} />
+                nodeData.title!==null ?
+                <WidgetSimpleTitle widgetTitle={nodeData.title} />
                     :
                     'no-title'
             }
             {
-                nodeData.featuredImage!==null ? 
-                    <Widget_SimpleHeroImage imgObj={nodeData.featuredImage.node} /> 
+                nodeData.featuredImage!==null ?
+                    <WidgetSimpleHeroImage imgObj={nodeData.featuredImage.node} />
                     :
                     ''
             }
             {
-                nodeData.content!==null ? 
-                    <Widget_SimpleContent contentHTML={nodeData.content} /> 
+                nodeData.content!==null ?
+                    <WidgetSimpleContent contentHTML={nodeData.content} />
                     :
                     ''
             }
-           
+
         </>
     )
 }

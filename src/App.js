@@ -1,65 +1,50 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import { useDemoData } from './services/config';
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useQuery, gql } from "@apollo/client";
 import __GraphQL_Queries from "./components/__GraphQL_Queries";
 import { logginF } from './components/__Utils';
 
-import {
-  _Header,
-  _Footer,
-  // Page_Home,
-  // Page_WeAreTrusted,
-  // Page_WeDeliver,
-  // Page_TheTeam,
-  // Page_Contact,
-
-  // Page_CreativeReviews,
-  // Page_TemplateCreativeReview,
-
-  // Page_TemplatePoject,
-  // Page_TemplateSimple,
-
-  _AnimationLayout,
- 
-  // Tool_EditPage
-} from "./components";
+import Header from './components/_Header';
+import Footer from './components/_Footer';
+import AnimationLayout from './components/_AnimationLayout';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/css/style.css';
 
-const Page_Home = lazy( () => import("./components/Page_Home") );
+const PageHome = lazy( () => import("./components/Page_Home") );
 const Page_WeAreTrusted = lazy( () => import("./components/Page_WeAreTrusted") );
 const Page_WeDeliver = lazy( () => import("./components/Page_WeDeliver") );
 const Page_TheTeam = lazy( () => import("./components/Page_TheTeam") );
 const Page_Contact = lazy( () => import("./components/Page_Contact") );
 const Page_CreativeReviews = lazy( () => import("./components/Page_CreativeReviews") );
-const Page_TemplateCreativeReview = lazy( () => import("./components/Page_TemplateCreativeReview") );
-const Page_TemplatePoject = lazy( () => import("./components/Page_TemplatePoject") );
-const Page_TemplateSimple = lazy( () => import("./components/Page_TemplateSimple") );
-const Tool_EditPage = lazy( () => import("./components/Tool_EditPage") );
+const PageTemplateCreativeReview = lazy( () => import("./components/Page_TemplateCreativeReview") );
+const PageTemplatePoject = lazy( () => import("./components/Page_TemplatePoject") );
+const PageTemplateSimple = lazy( () => import("./components/Page_TemplateSimple") );
+const ToolEditPage = lazy( () => import("./components/Tool_EditPage") );
 
 
 
 
 const PageComponentsMap_slug_component = {
-  'we-are-trusted': Page_WeAreTrusted, 
-  'we-deliver': Page_WeDeliver, 
+  'we-are-trusted': Page_WeAreTrusted,
+  'we-deliver': Page_WeDeliver,
   'the-team': Page_TheTeam,
   'contact': Page_Contact,
   'creative-reviews': Page_CreativeReviews
 
-  // all other slugs go to - > 
-  // Page_TemplateSimple, 
-  // Page_TemplatePoject, 
-  // Page_TemplateCreativeReview according to their parent
+  // all other slugs go to - >
+  // PageTemplateSimple,
+  // PageTemplatePoject,
+  // PageTemplateCreativeReview according to their parent
 }
 
  ;
 
 let current_pathname = window.location.pathname;
 
-if ( current_pathname.substr(current_pathname.length - 1) != "/" ){
+if ( current_pathname.substr(current_pathname.length - 1) !== "/" ){
   current_pathname+="/";
 }
 
@@ -75,7 +60,7 @@ if (isMobile) caching_type = 'main queries';
 // const caching_type = 'main queries';
 // const caching_type = 'none';
 
-if (caching_type == 'all site'){
+if (caching_type === 'all site'){
       // caching all site
       GET_MAIN_QUERY = gql`query GET_ALL_PAGES
       {
@@ -89,7 +74,7 @@ if (caching_type == 'all site'){
         ${__GraphQL_Queries.queries.creativeReviews}
       }`;
 
-}else if (caching_type == 'main queries') {
+}else if (caching_type === 'main queries') {
   // caching three main queries
   switch (current_pathname) {
     case '/': // homepage
@@ -138,7 +123,7 @@ if (caching_type == 'all site'){
       }`;
       break;
     default:
-      GET_MAIN_QUERY = gql`query GET_CLIENTS_CONTENT 
+      GET_MAIN_QUERY = gql`query GET_CLIENTS_CONTENT
       {
         ${__GraphQL_Queries.queries.pages}
         ${__GraphQL_Queries.queries.menuItems}
@@ -153,10 +138,10 @@ if (caching_type == 'all site'){
 
 
 const  App = () => {
-  
+
     // preload images
     let imagesPreload = [];
-    
+
   // show footer a liitle bit late for LCP reasons
   // useEffect(() => {
   //     setTimeout(function(){
@@ -167,10 +152,10 @@ const  App = () => {
   const { data, loading, error } = useQuery(GET_MAIN_QUERY);
 
   if (loading) { logginF('loading main query'); return }
-  if (error) { logginF(error.graphQLErrors); return }
+  if (error) { logginF(error); return <p role="alert">Unable to load the site. Please refresh to try again.</p> }
   if (!data) { logginF('!data main query'); return }
 
- 
+
   // console.log(data);
 
   const siteNodes = data.pages.nodes;
@@ -182,7 +167,7 @@ const  App = () => {
   var preloadingProjectsArray = [];
 
 
-  if (caching_type == 'all site'){
+  if (caching_type === 'all site'){
       // homepage
       const homePageData = data.homePage;
 
@@ -190,12 +175,12 @@ const  App = () => {
         const parser = new DOMParser();
         const parsedDocument = parser.parseFromString(homePageData.content, "text/html");
         const imgs = parsedDocument.getElementsByTagName("img");
-        for (const [key, value] of Object.entries(imgs)) {
+        for (const value of Array.from(imgs)) {
             imagesPreload.push(value.src.replace('-1024x373', ''));
         }
-        imagesPreload.push(homePageData.homepageExtras.image1.sourceUrl);
-        imagesPreload.push(homePageData.homepageExtras.image2.sourceUrl);
-        imagesPreload.push(homePageData.homepageExtras.image3.sourceUrl);
+        imagesPreload.push(homePageData.homepageExtras?.image1?.sourceUrl);
+        imagesPreload.push(homePageData.homepageExtras?.image2?.sourceUrl);
+        imagesPreload.push(homePageData.homepageExtras?.image3?.sourceUrl);
         // imagesPreload.push(homePageData.homepageExtras.image4.sourceUrl);
         // imagesPreload.push(homePageData.homepageExtras.image5.sourceUrl);
         // imagesPreload.push(homePageData.homepageExtras.image6.sourceUrl);
@@ -206,7 +191,7 @@ const  App = () => {
       // weAreTrusted
       const weAreTrustedData = data.weAreTrusted;
       if (weAreTrustedData)
-        imagesPreload.push(weAreTrustedData.featuredImage.node.sourceUrl);
+        imagesPreload.push(weAreTrustedData.featuredImage?.node?.sourceUrl);
 
       // weDeliver
       const weDeliverData = data.weDeliver;
@@ -215,20 +200,20 @@ const  App = () => {
             if (ind<2){
               if (element.node.featuredImage){
                 imagesPreload.push(element.node.featuredImage.node.sourceUrl);
-                
+
               }
             }
-            if (element.node.projectsExtras.heroImage)
-              preloadingProjectsArray[element.node.uri] = element.node.projectsExtras.heroImage.sourceUrl;
+            if (element.node.projectsExtras?.heroImage)
+              preloadingProjectsArray[element.node.uri] = element.node.projectsExtras?.heroImage.sourceUrl;
           });
       }
 
       // theTeam
       const theTeamData = data.theTeam;
       if (theTeamData){
-        imagesPreload.push(theTeamData.weHaveFacesExtras.tile1.thumb.sourceUrl);
-        imagesPreload.push(theTeamData.weHaveFacesExtras.tile2.thumb.sourceUrl);
-        imagesPreload.push(theTeamData.weHaveFacesExtras.tile3.thumb.sourceUrl);
+        imagesPreload.push(theTeamData.weHaveFacesExtras?.tile1?.thumb?.sourceUrl);
+        imagesPreload.push(theTeamData.weHaveFacesExtras?.tile2?.thumb?.sourceUrl);
+        imagesPreload.push(theTeamData.weHaveFacesExtras?.tile3?.thumb?.sourceUrl);
         // imagesPreload.push(theTeamData.weHaveFacesExtras.tile4.thumb.sourceUrl);
         // imagesPreload.push(theTeamData.weHaveFacesExtras.tile5.thumb.sourceUrl);
         // imagesPreload.push(theTeamData.weHaveFacesExtras.tile6.thumb.sourceUrl);
@@ -239,25 +224,25 @@ const  App = () => {
 
       // pages
       const otherPages = data.pages;
-      
+
       // console.log(otherPages);
       otherPages.nodes.forEach((element, ind) => {
         if (element.featuredImage){
           if (
-            ind == 14 ||  // we believe 
-            ind == 16     // we team
-          ) 
+            ind === 14 ||  // we believe
+            ind === 16     // we team
+          )
             imagesPreload.push(element.featuredImage.node.sourceUrl);
             preloadingArray[element.uri] = element.featuredImage.node.sourceUrl;
             // bind images to nodes
-  
+
 
 
         }
       });
 
 
-      imagesPreload.forEach((image) => {
+      imagesPreload.filter(Boolean).forEach((image) => {
           const newImage = new Image();
           newImage.src = image;
           window[image] = newImage;
@@ -271,48 +256,49 @@ const  App = () => {
 
   return (
     <HelmetProvider>
-          <Helmet>
-              <title>VALUECOM</title>
+          <Helmet htmlAttributes={{ class: useDemoData ? "demo-mode" : "" }}>
+              <title>FORM & FIELD</title>
           </Helmet>
           <BrowserRouter>
-              <_Header menuNodes={menuNodes} preloadingArray={preloadingArray} />
+              <Header menuNodes={menuNodes} preloadingArray={preloadingArray} />
               {
-                (process.env.NODE_ENV == 'development') 
+                (!useDemoData && process.env.NODE_ENV === 'development')
                 ?
-                <Tool_EditPage />
+                <Suspense fallback={null}><ToolEditPage /></Suspense>
                 :
                 <></>
               }
               <Suspense fallback={<span style={{fontSize:'12px'}}></span>} >
                 <Routes >
-                  <Route element={<_AnimationLayout />}  >
+                  <Route element={<AnimationLayout />}  >
                   {/* <Route> */}
-                    <Route exact path="/" element={<Page_Home preloadingArray={preloadingArray}  /> } />
+                    <Route exact path="/" element={<PageHome preloadingArray={preloadingArray}  /> } />
                       {siteNodes.map((siteNode, index) => {
-                          if (siteNode.slug!='homepage'){
+                          if (siteNode.slug === 'homepage') return null;
+                          {
                               let PageComponent = PageComponentsMap_slug_component[siteNode.slug];
-                              // console.log(PageComponent==undefined);
+                              // console.log(PageComponent===undefined);
                               // console.log(PageComponent);
                               // 404 - slug 404 is reserved from wordpress but that is not a problem
-                              if (siteNode.slug=='404-2') { // all pages that have no wrong slug go to 404-2 page template
+                              if (siteNode.slug==='404-2') { // all pages that have no wrong slug go to 404-2 page template
                                   return (
-                                    <Route key={index} path="*" element={<Page_TemplateSimple nodeData={siteNode} />}   />
+                                    <Route key={index} path="*" element={<PageTemplateSimple nodeData={siteNode} />}   />
                                   );
-                              }else if (siteNode.parent!=null && siteNode.parent.node.slug == 'creative-reviews') {// all pages that have creative-reviews as parent are creative-review html newsletters 
+                              }else if (siteNode.parent!=null && siteNode.parent.node.slug === 'creative-reviews') {// all pages that have creative-reviews as parent are creative-review html newsletters
                                   return (
-                                    <Route key={index} path={siteNode.uri} element={<Page_TemplateCreativeReview nodeData={siteNode} />}   />
+                                    <Route key={index} path={siteNode.uri} element={<PageTemplateCreativeReview nodeData={siteNode} />}   />
                                   );
-                              }else if (siteNode.parent!=null && siteNode.parent.node.slug == 'we-deliver') {// all pages that have work as parent are projects 
+                              }else if (siteNode.parent!=null && siteNode.parent.node.slug === 'we-deliver') {// all pages that have work as parent are projects
                                   return (
-                                    <Route key={index} path={siteNode.uri} element={<Page_TemplatePoject nodeData={siteNode} />}   />
+                                    <Route key={index} path={siteNode.uri} element={<PageTemplatePoject nodeData={siteNode} />}   />
                                   );
-                              }else if (PageComponent!=undefined) {// all pages that have custom template are mapped 
+                              }else if (PageComponent!==undefined) {// all pages that have custom template are mapped
                                   return (
                                     <Route key={index} path={siteNode.uri} element={<PageComponent nodeData={siteNode} preloadingArray={preloadingArray} preloadingProjectsArray={preloadingProjectsArray} />}   />
                                   );
                               } else { // all pages that dont have custom template are not mapped mapped
                                   return (
-                                    <Route key={index} path={siteNode.uri} element={<Page_TemplateSimple nodeData={siteNode} />}   />
+                                    <Route key={index} path={siteNode.uri} element={<PageTemplateSimple nodeData={siteNode} />}   />
                                   );
                               }
                           }
@@ -320,7 +306,7 @@ const  App = () => {
                   </Route>
                 </Routes>
                 </Suspense>
-              <_Footer menuNodesFooter={menuNodesFooter} />
+              <Footer menuNodesFooter={menuNodesFooter} />
           </BrowserRouter>
     </HelmetProvider>
   );

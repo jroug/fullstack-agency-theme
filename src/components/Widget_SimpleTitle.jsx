@@ -4,7 +4,7 @@ const Widget_SimpleTitle = (props) => {
     return(  
         <>
         <Helmet>
-            <title>{props.widgetTitle} | VALUECOM</title>
+            <title>{props.widgetTitle} | FORM & FIELD</title>
         </Helmet>
         <section className="page-title-section">
             <div className="container-xxl">
